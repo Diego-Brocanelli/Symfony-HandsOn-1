@@ -15,7 +15,7 @@ class Cart extends ArrayObject
         if ($this->offsetExists($product->getId())) {
             $cartItem = $this->offsetGet($product->getId());
             $newQuantity = $cartItem->quantity + 1;
-            $this->update($product, $newQuantity);
+            $this->update($product->getId(), $newQuantity);
         } else {
             $cartItem = new ArrayObject();
             $cartItem->setFlags(ArrayObject::ARRAY_AS_PROPS);
@@ -25,17 +25,27 @@ class Cart extends ArrayObject
         }
     }
 
-    public function delete(Product $product)
+    /**
+     * @param int $id
+     */
+    public function delete($id)
     {
-        $this->offsetUnset($product->getId());
+        if (is_int($id)) {
+            $this->offsetUnset($id);
+        }
     }
 
-    public function update(Product $product, $quantity)
+    /**
+     * @param int $id
+     */
+    public function update($id, $quantity)
     {
-        $isValidQuantity = round($quantity) && ($quantity > 0 && $quantity <= 10);
-        if ($isValidQuantity && $this->offsetExists($product->getId())) {
-            $cartItem = $this->offsetGet($product->getId());
-            $cartItem->quantity = $quantity;
+        if (is_int($id)) {
+            $isValidQuantity = round($quantity) && ($quantity > 0 && $quantity <= 10);
+            if ($isValidQuantity && $this->offsetExists($id)) {
+                $cartItem = $this->offsetGet($id);
+                $cartItem->quantity = $quantity;
+            }
         }
     }
 
